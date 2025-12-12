@@ -514,7 +514,6 @@ export {
     deleteSingleProject,
     createTask,
     getAllTask,
-    getAllTask,
     getSingleTask,
     updateSingleTask,
     deleteTask,
