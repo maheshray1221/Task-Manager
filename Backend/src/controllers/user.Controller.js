@@ -1,8 +1,268 @@
-import asyncHandler from "../utils/asyncHandler"
-import apiError from "../utils/apiError"
-import apiResponse from "../utils/apiResponse"
+import asyncHandler from "../utils/asyncHandler.js"
+import apiError from "../utils/apiError.js"
+import apiResponse from "../utils/apiResponse.js"
+import User from "../models/user.model.js"
+import Task from "../models/task.js"
+import Project from "../models/project.model.js"
 
+// GeneretAccessAndRefreshToken
+const generateAccessAndRefreshToken = async (userId) => {
+    const user = await User.findById(userId)
+    if (!user) {
+        throw new apiError(401, "userId not match")
+    }
+    const accessToken = user.generateAccessToken()
+    const refreshToken = user.generateRefreshToken()
+    user.refreshToken = refreshToken
 
-const createTask = asyncHandler(async (req, res) => {
-const {title,description,status,priority,startDate,dueDate,tags} = req.body
+    await user.save({ validateBeforeSave: false })
+
+    return { accessToken, refreshToken }
+}
+
+// RegisterUser
+
+const registerUser = asyncHandler(async (req, res) => {
+    const { username, email, password } = req.body
+    if (
+        [username, email, password].some((field) => field?.trim() === "")
+    ) {
+        throw new apiError(401, "users all details required")
+    }
+
+    const user = await User.findOne({ $or: [{ email }, { username }] })
+
+    if (user) {
+        throw new apiError(401, "user credintial all ready exist")
+    }
+
+    const newUser = await User.create(
+        {
+            username,
+            email,
+            password
+        }
+    )
+
+    const createUser = await User.findById(newUser._id).select("-password")
+
+    if (!createUser) {
+        throw new apiError(401, "somthing went wrong while creating User")
+    }
+    return res
+        .status(200)
+        .json(new apiResponse(200, createUser, "user created successfully"))
 })
+
+//LoginUser
+
+const loginUser = asyncHandler(async (req, res) => {
+    const { username, password } = req.body
+
+    if (
+        [username, password].some((field) => field.trim() === "")
+    ) {
+        throw new apiError(401, "all fields are required")
+    }
+    const loggedIn = await User.findOne({ username })
+
+    if (!loggedIn) {
+        throw new apiError(401, "user not registered")
+    }
+
+    const isPasswordValid = await loggedIn.isPasswordCorrect(password)
+
+    if (!isPasswordValid) {
+        throw new apiError(401, "User Password are wrong")
+    }
+
+    // generate refresh and access token
+    const { accessToken, refreshToken } = await generateAccessAndRefreshToken(loggedIn._id)
+
+    const loggedInUser = await User.findById(loggedIn._id)
+        .select("-password -refreshToken")
+    const options = {
+        httpOnly: true,
+        secure: true
+    }
+
+    return res
+        .status(200)
+        .cookie("accessToken", accessToken, options)
+        .cookie("refreshToken", refreshToken, options)
+        .json(new apiResponse(200,
+            { accessToken, refreshToken, loggedInUser: loggedIn },
+            "user successfully logged in."))
+})
+
+// check-Auth
+const checkAuth = asyncHandler(async (req, res) => {
+    return res
+        .status(200)
+        .json(new apiResponse(
+            200,
+            { user: req.user },
+            "user logged in"
+        )
+        )
+})
+
+//createProject
+const createProject = asyncHandler(async (req, res) => {
+    const { name, description, members } = req.body
+
+    if ([name, description, members].some((field) => field.trim() === "")) {
+        throw new apiError(401, "all fileds are required")
+    }
+
+    const newProject = await Project.create(
+        {
+            name,
+            description,
+            members,
+            createdBy: req.user._id,
+        }
+    )
+
+    if (!newProject) {
+        throw new apiError(401, "Error while creating Project")
+    }
+
+    return res
+        .status(200)
+        .json(new apiResponse(200, newProject, "Successfully add New Project"))
+})
+
+//getAllProject
+const getAllProject = asyncHandler(async (req, res) => {
+    const getProjects = await Project.find()
+
+    if (!getProjects) {
+        throw new apiError(401, "Error while get All Project")
+    }
+
+    return res
+        .status(200)
+        .json(new apiResponse(200, getProjects, "Successfully get all project"))
+})
+
+//getSingleProject
+const getSingleProject = asyncHandler(async (req, res) => {
+    const { id } = req.params
+
+    if (!id) {
+        throw new apiError(401, "Id required")
+    }
+    const singleProject = await Project.findById(id)
+
+    if (!singleProject) {
+        throw new apiError(401, "Error while get single Project")
+    }
+
+    return res
+        .status(200)
+        .json(new apiResponse(200, singleProject, "Successfully get single Project"))
+})
+
+//updateSingleProject
+const updateSingleProject = asyncHandler(async (req, res) => {
+    const { id } = req.params
+    if (!id) {
+        throw new apiError(401, "Id required")
+    }
+    const { name, description, members } = req.body
+
+    if ([name, description, members].some((field) => field.trim() === "")) {
+        throw new apiError(401, "all fileds are required")
+    }
+    const updateProject = await Project.findByIdAndUpdate(id,
+        {
+            name,
+            description,
+            members
+        }, { new: true, runValidators: true }
+    )
+
+    if (!updateProject) {
+        throw new apiError(401, "Error while updating Project")
+    }
+
+    return res
+        .status(200)
+        .json(new apiResponse(200, updateProject, "Successfully Update Project"))
+})
+
+//deleteSingleProject
+const deleteSingleProject = asyncHandler(async (req, res) => {
+    const { id } = req.params
+
+    if (!id) {
+        throw new apiError(401, "Id required")
+    }
+    const deleteProject = await Project.findByIdAndDelete(id)
+
+    if (!deleteProject) {
+        throw new apiError(401, "Error while deleting Project")
+    }
+
+    return res
+        .status(200)
+        .json(new apiResponse(200, deleteProject, "Successfully delete Project"))
+})
+
+// createTask
+const createTask = asyncHandler(async (req, res) => {
+    const { title, description, status, priority, dueDate, tags } = req.body
+
+    if ([title, description, status, priority, dueDate, tags]
+        .some((field) => field.trim() === "")
+    ) {
+        throw new apiError(401, "all fields are required")
+    }
+
+    const newTask = await Task.create(
+        {
+            title,
+            description,
+            status,
+            priority,
+            dueDate,
+            tags,
+            createdBy: req.user._id,
+        }
+    )
+    if (!newTask) {
+        throw new apiError(401, "Error while adding task")
+    }
+
+    return res
+        .status(200)
+        .json(new apiResponse(200, newTask, "Task add successfully"))
+})
+//getAllTask
+//getSingleTask
+// updateSingleTask
+// deleteTask
+
+//createSubTask
+//deleteSubTask
+//getAllSubTask
+//getSingleTask
+
+//createComment
+//deleteComment
+//getAllComment
+//updateSingleComment
+export {
+    registerUser,
+    loginUser,
+    checkAuth,
+    createProject,
+    getAllProject,
+    getSingleProject,
+    updateSingleProject,
+    deleteSingleProject,
+    createTask
+}
+
+

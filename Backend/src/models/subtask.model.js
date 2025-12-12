@@ -5,14 +5,22 @@ const subtaskSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "Task"
         },
+        title: {
+            type: String,
+            required: true,
+        },
+        description: {
+            type: String,
+            required: true,
+        },
         status: {
             type: String,
             required: true,
             unique: true,
         },
-        title: {
-            type: [String],
-            required: true,
+        createdBy: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User"
         }
     }, { timestamps: true }
 )
