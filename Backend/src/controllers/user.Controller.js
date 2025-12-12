@@ -4,6 +4,8 @@ import apiResponse from "../utils/apiResponse.js"
 import User from "../models/user.model.js"
 import Task from "../models/task.js"
 import Project from "../models/project.model.js"
+import SubTask from "../models/subtask.model.js"
+import Comment from "../models/comment.model.js"
 
 // GeneretAccessAndRefreshToken
 const generateAccessAndRefreshToken = async (userId) => {
@@ -21,7 +23,6 @@ const generateAccessAndRefreshToken = async (userId) => {
 }
 
 // RegisterUser
-
 const registerUser = asyncHandler(async (req, res) => {
     const { username, email, password } = req.body
     if (
@@ -55,7 +56,6 @@ const registerUser = asyncHandler(async (req, res) => {
 })
 
 //LoginUser
-
 const loginUser = asyncHandler(async (req, res) => {
     const { username, password } = req.body
 
@@ -320,14 +320,189 @@ const deleteTask = asyncHandler(async (req, res) => {
 })
 
 //createSubTask
-//deleteSubTask
+const createSubTask = asyncHandler(async (req, res) => {
+    const { title, description, status, taskId } = req.body
+
+    if ([title, description, status, taskId].some((field) => field.trim() === "")) {
+        throw new apiError(401, "all fileds are required")
+    }
+
+    const newSubTask = await SubTask.create(
+        {
+            taskId,
+            title,
+            description,
+            status,
+            createdBy: req.user._id
+        }
+    )
+
+    if (!newSubTask) {
+        throw new apiError(401, "Error while creating new SubTask")
+    }
+    return res
+        .status(200)
+        .json(new apiResponse(200, newSubTask, "Successfully created subTask"))
+})
+
 //getAllSubTask
+const getAllSubTask = asyncHandler(async (req, res) => {
+    const getSubTask = await SubTask.find()
+
+    if (!getSubTask) {
+        throw new apiError(401, "Error while get SubTask")
+    }
+    return res
+        .status(200)
+        .json(new apiResponse(200, getSubTask, "Successfully get All Subtask"))
+})
+
 //getSingleTask
+const getSingleSubTask = asyncHandler(async (req, res) => {
+    const { id } = req.params
+    if (!id) {
+        throw new apiError(401, "Id required")
+    }
+
+    const singleSubTask = await SubTask.findById(id)
+
+    if (!singleSubTask) {
+        throw new apiError(401, "Error while Get Single SubTask")
+    }
+
+    return res
+        .status(200)
+        .json(new apiResponse(200, singleSubTask, "Successfully get subtask"))
+})
+
+//updateSubTask
+const updateSubTask = asyncHandler(async (req, res) => {
+    const { id } = req.params
+
+    if (!id) {
+        throw new apiError(401, "Id required")
+    }
+
+    const { title, description, status } = req.body
+
+    if ([title, description, status].some((field) => field.trim() === "")) {
+        throw new apiError(401, "all fileds are required")
+    }
+
+    const EditSubtask = await SubTask.findByIdAndUpdate(id, {
+        title,
+        description,
+        status,
+    }, { new: true, runValidators: true })
+
+    if (!EditSubtask) {
+        throw new apiError(401, "Error while Editing subtask")
+    }
+
+    return res
+        .status(200)
+        .json(new apiResponse(200, EditSubtask, "Successfully updated subtask"))
+})
+
+//deleteSubTask
+const deleteSubTask = asyncHandler(async (req, res) => {
+    const { id } = req.params
+
+    if (!id) {
+        throw new apiError(401, "Id required")
+    }
+
+    const destroySubTask = await SubTask.findByIdAndDelete(id)
+
+    if (!destroySubTask) {
+        throw new apiError(401, "Error while deleting subTask")
+    }
+
+    return res
+        .status(200)
+        .json(new apiResponse(200, destroySubTask, "Successfully deleted subTask"))
+})
 
 //createComment
-//deleteComment
+const createComment = asyncHandler(async (req, res) => {
+    const { taskId, message } = req.body
+
+    if (!taskId || !message) {
+        throw new apiError(401, "all field are required")
+    }
+
+    const newComment = await Comment.create({
+        taskId,
+        message,
+        createdBy: req.user._id
+    })
+
+    if (!newComment) {
+        throw new apiError(401, "Error while add new Comment")
+    }
+
+    return res
+        .status(200)
+        .json(new apiResponse(200, newComment, "Successfully create new Comment"))
+})
+
 //getAllComment
+const getAllComment = asyncHandler(async (req, res) => {
+    const GetComments = await Comment.find()
+
+    if (!GetComments) {
+        throw new apiError(401, "Error while Get Comments")
+    }
+    return res
+        .status(200)
+        .json(new apiResponse(200, GetComments, "Successfully Get Comments"))
+})
+
 //updateSingleComment
+const updateSingleComment = asyncHandler(async (req, res) => {
+    const { id } = req.params
+
+    if (!id) {
+        throw new apiError(401, "Id required")
+    }
+
+    const { message } = req.body
+
+    if (!message) {
+        throw new apiError(401, "message field required")
+    }
+
+    const updateMessage = await Comment.findByIdAndUpdate(id, {
+        message
+    }, { new: true, runValidators: true })
+
+    if (!updateMessage) {
+        throw new apiError(401, "Error while update Message")
+    }
+
+    return res
+        .status(200)
+        .json(new apiResponse(200, updateMessage, "Successfully updated Comment"))
+
+})
+
+//deleteComment
+const deleteComment = asyncHandler(async (req, res) => {
+    const { id } = req.params
+    if (!id) {
+        throw new apiError(401, "Id required")
+    }
+
+    const destroyComment = await Comment.findByIdAndDelete(id)
+
+    if (!destroyComment) {
+        throw new apiError(401, "Error while deleting Comment")
+    }
+
+    return res
+        .status(200)
+        .json(new apiResponse(200, destroyComment, "Successfully deleted Comment"))
+})
 export {
     registerUser,
     loginUser,
@@ -343,6 +518,15 @@ export {
     getSingleTask,
     updateSingleTask,
     deleteTask,
+    createSubTask,
+    getAllSubTask,
+    getSingleSubTask,
+    updateSubTask,
+    deleteSubTask,
+    createComment,
+    getAllComment,
+    updateSingleComment,
+    deleteComment
 }
 
 

@@ -5,7 +5,7 @@ const commentSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Task"
     },
-    userId: {
+    createdBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
     },
