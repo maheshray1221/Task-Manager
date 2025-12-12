@@ -239,10 +239,85 @@ const createTask = asyncHandler(async (req, res) => {
         .status(200)
         .json(new apiResponse(200, newTask, "Task add successfully"))
 })
+
 //getAllTask
+const getAllTask = asyncHandler(async (req, res) => {
+    const getTask = await Task.find()
+
+    if (!getTask) {
+        throw new apiError(401, "Error while get Task")
+    }
+    return res
+        .status(200)
+        .json(new apiResponse(200, getTask, "Successfully get Task"))
+})
+
 //getSingleTask
+const getSingleTask = asyncHandler(async (req, res) => {
+    const { id } = req.params
+
+    if (!id) {
+        throw new apiError(401, "Id required")
+    }
+
+    const singleTask = await Task.findById(id)
+
+    if (!singleTask) {
+        throw new apiError(401, "Error while get single Task")
+    }
+    return res
+        .status(200)
+        .json(new apiResponse(200, singleTask, "Successfully get Task"))
+})
+
 // updateSingleTask
+const updateSingleTask = asyncHandler(async (req, res) => {
+    const { id } = req.params
+
+    if (!id) {
+        throw new apiError(401, "Id required")
+    }
+    const { title, description, status, priority, dueDate, tags } = req.body
+
+    if ([title, description, status, priority, dueDate, tags]
+        .some((field) => field.trim() === "")
+    ) {
+        throw new apiError(401, "all fields are required")
+    }
+    const updateTask = await Task.findByIdAndUpdate(id, {
+        title,
+        description,
+        status,
+        priority,
+        dueDate,
+        tags,
+    }, { new: true, runValidators: true })
+
+    if (!updateTask) {
+        throw new apiError(401, "Error while update Task")
+    }
+
+    return res
+        .status(200)
+        .json(new apiResponse(200, updateTask, "Successfully updated Task"))
+})
+
 // deleteTask
+const deleteTask = asyncHandler(async (req, res) => {
+    const { id } = req.params
+
+    if (!id) {
+        throw new apiError(401, "Id required")
+    }
+    const destroyTask = await Task.findByIdAndDelete(id)
+
+    if (!destroyTask) {
+        throw new apiError(401, "Error while deleting task")
+    }
+    return res
+        .status(200)
+        .json(new apiResponse(200, destroyTask, "Successfully deleted Task"))
+})
 
 //createSubTask
 //deleteSubTask
@@ -262,7 +337,12 @@ export {
     getSingleProject,
     updateSingleProject,
     deleteSingleProject,
-    createTask
+    createTask,
+    getAllTask,
+    getAllTask,
+    getSingleTask,
+    updateSingleTask,
+    deleteTask,
 }
 
 
