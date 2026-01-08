@@ -9,8 +9,8 @@ export default function Desboard() {
     <>
       {/* <Sidebar /> */}
       {/* <TaskOverview />  */}
-      {/*  <TaskList /> */}
-      <TaskStatics />
+      <TaskList />
+      {/* <TaskStatics /> */}
     </>
   );
 }
