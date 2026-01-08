@@ -5,7 +5,7 @@ export default function TaskList() {
     <div>
       <div
         className="flex lg:justify-between lg:w-200 lg:h-12 bg-white lg:rounded-xl border-2 
-      lg:shadow-sm border-gray-200"
+      lg:shadow-sm border-gray-200 lg:mt-7"
       >
         <div className="flex lg:gap-1.5 lg:w-[33%] lg:ml-7 items-center">
           <svg
@@ -23,7 +23,7 @@ export default function TaskList() {
             />
           </svg>
 
-          <h1 className="lg:text-lg ">All Tasks</h1>
+          <h1 className="lg:text-lg lg:font-semibold ">All Tasks</h1>
         </div>
         <div className="flex lg:w-[65%] lg:h-9 lg:gap-5 items-center lg:ml-18 lg:mt-1 lg:text-[0.80rem] rounded-xl bg-sky-50">
           <p className="border border-yellow-200 lg:px-3 lg:py-1 rounded-sm">
@@ -49,9 +49,9 @@ export default function TaskList() {
 
       <div className="lg:w-200 lg:min-h-vh">
         {/* task component  yha se loop start hoga*/}
-        <div className=" lg:w-200 lg:min-h-35  lg:mt-10 bg-white lg:rounded-xl border-2 lg:shadow-sm border-gray-200 ">
+        <div className=" lg:w-200 lg:min-h-35  lg:mt-7 bg-white lg:rounded-xl border-2 lg:shadow-sm border-gray-200 ">
           <div className="flex lg:justify-between lg:mt-3 lg:ml-4">
-            <h1 className="lg:text-2xl lg:font-bold">title</h1>
+            <h1 className="lg:text-2xl lg:font-semibold">title</h1>
             <div className="flex lg:w-[20%] lg:gap-6">
               <svg
                 xmlns="http://www.w3.org/2000/svg"

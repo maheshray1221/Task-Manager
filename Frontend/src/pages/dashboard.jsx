@@ -8,8 +8,8 @@ export default function Desboard() {
   return (
     <>
       {/* <Sidebar /> */}
-      {/* <TaskOverview />  */}
-      <TaskList />
+      <TaskOverview />
+      {/* <TaskList /> */}
       {/* <TaskStatics /> */}
     </>
   );
