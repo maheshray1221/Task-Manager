@@ -3,7 +3,7 @@ import React from "react";
 export default function TaskStatics() {
   return (
     <div>
-      <div className="bg-white/60 lg:w-130 lg:h-150 lg:mt-20 lg:ml-30 lg:rounded-xl border-2 border-gray-200">
+      <div className="bg-white/60 lg:w-98 lg:h-95 lg:mt-4 lg:ml-5 lg:rounded-xl border-2 border-gray-200">
         <div className="flex lg:gap-2 lg:ml-10 lg:mt-4">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -23,8 +23,8 @@ export default function TaskStatics() {
           <h1 className="text-lg font-bold">Task Statistics</h1>
         </div>
 
-        <div className="flex lg:w-110 lg:h-50 flex-wrap lg:mt-5 lg:ml-6">
-          <div className="bg-white lg:w-50 lg:h-18 lg:rounded-xl lg:ml-5 flex lg:border-2 lg:shadow-sm border-gray-200">
+        <div className="flex lg:w-110 lg:h-50 flex-wrap lg:mt-5 lg:ml-5">
+          <div className="bg-white lg:w-42 lg:h-18 lg:rounded-xl lg:ml-0 flex lg:border-2 lg:shadow-sm border-gray-200">
             <div className="bg-amber-300 lg:w-5 lg:h-5 lg:mt-7 lg:ml-3 lg:rounded-sm">
               <div className="lg:w-3 lg:h-3 border border-black rounded-full relative top-1 left-1"></div>
             </div>
@@ -33,7 +33,7 @@ export default function TaskStatics() {
               <p className="lg:text-[0.90rem]">Total Tasks</p>
             </div>
           </div>
-          <div className="bg-white lg:w-50 lg:h-18 lg:rounded-xl lg:ml-5 flex lg:border-2 lg:shadow-sm border-gray-200">
+          <div className="bg-white lg:w-42 lg:h-18 lg:rounded-xl lg:ml-4 flex lg:border-2 lg:shadow-sm border-gray-200">
             <div className="bg-amber-300 lg:w-5 lg:h-5 lg:mt-7 lg:ml-3 lg:rounded-sm">
               <div className="lg:w-3 lg:h-3 border border-black rounded-full relative top-1 left-1"></div>
             </div>
@@ -42,7 +42,7 @@ export default function TaskStatics() {
               <p className="lg:text-[0.90rem]">Completed</p>
             </div>
           </div>
-          <div className="bg-white lg:w-50 lg:h-18 lg:rounded-xl lg:ml-5 flex border-2 lg:shadow-sm border-gray-200">
+          <div className="bg-white lg:w-42 lg:h-18 lg:rounded-xl lg:ml-0 flex border-2 lg:shadow-sm border-gray-200">
             <div className="bg-amber-300 lg:w-5 lg:h-5 lg:mt-7 lg:ml-3 lg:rounded-sm">
               <div className="lg:w-3 lg:h-3 border border-black rounded-full relative top-1 left-1"></div>
             </div>
@@ -51,7 +51,7 @@ export default function TaskStatics() {
               <p className="lg:text-[0.90rem]">Pending</p>
             </div>
           </div>
-          <div className="bg-white lg:w-50 lg:h-18 lg:rounded-xl lg:ml-5 flex border-2 lg:shadow-sm border-gray-200">
+          <div className="bg-white lg:w-42 lg:h-18 lg:rounded-xl lg:ml-4 flex border-2 lg:shadow-sm border-gray-200">
             <div className="bg-amber-300 lg:w-5 lg:h-5 lg:mt-7 lg:ml-3 lg:rounded-sm">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -74,18 +74,18 @@ export default function TaskStatics() {
             </div>
           </div>
         </div>
-        <div className="bg-white lg:w-107 lg:h-18 lg:rounded-xl lg:ml-10 flex border-2 lg:shadow-sm border-gray-200">
+        <div className="bg-white lg:w-85 lg:h-18 lg:rounded-xl lg:ml-5 flex border-2 lg:shadow-sm border-gray-200">
           <div className="bg-amber-300 lg:w-5 lg:h-5 lg:mt-7 lg:ml-3 lg:rounded-sm">
             <div className="lg:w-3 lg:h-3 border border-black rounded-full relative top-1 left-1"></div>
           </div>
           <div className="lg:ml-3 lg:mt-3">
             <div className="flex">
               <p className="lg:text-[0.90rem]">Task Progress</p>
-              <p className=" lg:text-[0.95rem] lg:ml-60 bg-amber-300 lg:px-2 lg:py-0.5 lg:rounded-2xl">
+              <p className=" lg:text-[0.95rem] lg:ml-30 bg-amber-300 lg:px-2 lg:py-0.5 lg:rounded-2xl">
                 5/5
               </p>
             </div>
-            <input className="lg:w-90" type="range" name="" id="" />
+            <input className="lg:w-60" type="range" name="" id="" />
           </div>
         </div>
       </div>

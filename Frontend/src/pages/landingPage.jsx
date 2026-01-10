@@ -1,6 +1,8 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function LandingPage() {
+  const navigate = useNavigate();
   return (
     <div
       className="w-full min-h-screen overflow-x-hidden
@@ -26,6 +28,7 @@ export default function LandingPage() {
       </div>
 
       <button
+        onClick={() => navigate("/register")}
         className="px-4 py-2.5 bg-blue-600 text-white mt-12 ml-25 rounded-3xl text-[1.3rem] 
         md:px-7 md:py-4 md:text-2xl md:rounded-4xl md:ml-80 md:mt-13
         lg:mt-17 lg:ml-[43%] lg:text-3xl lg:rounded-4xl lg:py-4 lg:transition-transform lg:duration-500 lg:hover:scale-105 lg:hover:bg-blue-700"
@@ -148,6 +151,7 @@ export default function LandingPage() {
         </div>
       </div>
       <button
+        onClick={() => navigate("/register")}
         className="px-4 py-3 bg-blue-600 mt-10 ml-15 rounded-3xl text-[1.3rem] mb-5
         md:px-7.5 md:py-4.5 md:text-2xl md:rounded-4xl md:ml-66 md:mt-25 
         lg:text-3xl lg:rounded-4xl lg:ml-150 lg:transition-transform lg:duration-500 lg:hover:scale-105 lg:hover:bg-blue-700 text-white"

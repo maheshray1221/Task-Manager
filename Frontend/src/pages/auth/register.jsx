@@ -3,8 +3,8 @@ import React from "react";
 export default function Register() {
   return (
     <div
-      className=" lg:h-140 h-104 w-full mt-30 flex justify-center lg:mt-25 mb-40 lg:transition-transform 
-    lg:duration-500 lg:hover:scale-103 md:mt-60 md:h-100 md:mb-110  "
+      className=" lg:h-140 h-104 w-full mt-30 flex justify-center lg:mt-25  lg:transition-transform 
+    lg:duration-500 lg:hover:scale-103 md:mt-60 md:h-100   "
     >
       <div
         className="hidden md:block bg-[#1082ff] text-[#dffeff] lg:w-[25%] lg:rounded-tl-3xl
@@ -50,7 +50,7 @@ export default function Register() {
           </p>
         </div>
         <div
-          className="border mt-6 w-[93%] h-[55%] ml-3 rounded-sm border-slate-400  lg:ml-20 lg:w-[75%] lg:h-[45%] 
+          className="border mt-6 w-[93%] h-[56%] ml-3 rounded-sm border-slate-400  lg:ml-20 lg:w-[75%] lg:h-[48%] 
           lg:mt-7 lg:rounded-2xl transition-transform duration-500 hover:scale-105
           md:ml-7 md:w-[80%] md:h-[53%] md:mt-5 md:rounded-md  "
         >

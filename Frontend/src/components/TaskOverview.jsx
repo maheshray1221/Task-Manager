@@ -1,9 +1,9 @@
-import React from "react";
 import TaskList from "./TaskList";
-
+import { useNavigate } from "react-router-dom";
 export default function TaskOverview() {
+  const navigate = useNavigate();
   return (
-    <div className="lg:w-200 lg:min-h-screen lg:ml-7">
+    <div className="lg:w-200 lg:min-h-screen lg:ml-5">
       <div className="">
         <div className="flex lg:justify-between">
           <div className="flex lg:gap-3">
@@ -29,13 +29,16 @@ export default function TaskOverview() {
           </div>
 
           <div className="lg:w-[24%] lg:mt-4">
-            <button className="lg:px-7 lg:py-1 bg-blue-700 rounded-xl text-white lg:text-lg">
+            <button
+              className="lg:px-7 lg:py-1 bg-blue-700 rounded-xl text-white lg:text-lg"
+              onClick={() => navigate("/createTask")}
+            >
               + Add New Task
             </button>
           </div>
         </div>
 
-        <div className="flex justify-around lg:mt-7 ">
+        <div className="flex justify-around lg:mt-5 ">
           <div className="bg-white lg:w-50 lg:h-18 lg:rounded-xl flex border-2 lg:shadow-sm border-gray-200">
             <div className="bg-blue-200 lg:w-5 lg:h-5 lg:mt-7 lg:ml-3 lg:rounded-sm">
               <svg

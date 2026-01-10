@@ -7,11 +7,11 @@ export default function Toggle() {
     <button
       onClick={() => setOn(!on)}
       className={`w-14 h-7 rounded-full relative transition
-        ${on ? "bg-purple-600" : "bg-gray-300"}`}
+        ${on ? "bg-gray-300" : "bg-purple-600"}`}
     >
       <span
         className={`w-6 h-6 bg-white rounded-full absolute top-0.5 transition
-          ${on ? "translate-x-0.5" : "-translate-x-6.5"}`}
+          ${on ? "-translate-x-6.5" : "translate-x-0.5"}`}
       />
     </button>
   );

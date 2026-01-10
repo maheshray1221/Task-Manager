@@ -1,6 +1,8 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function TaskList() {
+  const navigate = useNavigate();
   return (
     <div>
       <div
@@ -60,6 +62,7 @@ export default function TaskList() {
                 strokeWidth={1.5}
                 stroke="currentColor"
                 className="size-6"
+                onClick={() => navigate("/updateTask")}
               >
                 <path
                   strokeLinecap="round"
@@ -115,23 +118,13 @@ export default function TaskList() {
       </div>
       {/* yhaa loop end hoga */}
       {/* add taks button */}
-      <div className="flex lg:gap-2 lg:mt-7 bg-sky-50 lg:w-200 lg:min-h-10 lg:rounded-xl border border-dashed border-sky-500">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={1.5}
-          stroke="currentColor"
-          className="size-6 lg:ml-80 lg:mt-2"
+      <div className=" lg:mt-7  ">
+        <button
+          className="bg-sky-50 px-80 py-2 rounded-xl border border-dashed border-sky-500"
+          onClick={() => navigate("/createTask")}
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M12 4.5v15m7.5-7.5h-15"
-          />
-        </svg>
-
-        <button>Add New Task</button>
+          <span className="text-3xl ">+</span> Add New Task
+        </button>
       </div>
     </div>
   );
