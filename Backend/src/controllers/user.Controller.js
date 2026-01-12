@@ -1,531 +1,566 @@
-import asyncHandler from "../utils/asyncHandler.js"
-import apiError from "../utils/apiError.js"
-import apiResponse from "../utils/apiResponse.js"
-import User from "../models/user.model.js"
-import Task from "../models/task.js"
-import Project from "../models/project.model.js"
-import SubTask from "../models/subtask.model.js"
-import Comment from "../models/comment.model.js"
+import asyncHandler from "../utils/asyncHandler.js";
+import apiError from "../utils/apiError.js";
+import apiResponse from "../utils/apiResponse.js";
+import User from "../models/user.model.js";
+import Task from "../models/task.js";
+import Project from "../models/project.model.js";
+import SubTask from "../models/subtask.model.js";
+import Comment from "../models/comment.model.js";
 
 // GeneretAccessAndRefreshToken
 const generateAccessAndRefreshToken = async (userId) => {
-    const user = await User.findById(userId)
-    if (!user) {
-        throw new apiError(401, "userId not match")
-    }
-    const accessToken = user.generateAccessToken()
-    const refreshToken = user.generateRefreshToken()
-    user.refreshToken = refreshToken
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new apiError(401, "userId not match");
+  }
+  const accessToken = user.generateAccessToken();
+  const refreshToken = user.generateRefreshToken();
+  user.refreshToken = refreshToken;
 
-    await user.save({ validateBeforeSave: false })
+  await user.save({ validateBeforeSave: false });
 
-    return { accessToken, refreshToken }
-}
+  return { accessToken, refreshToken };
+};
 
 // RegisterUser
 const registerUser = asyncHandler(async (req, res) => {
-    const { username, email, password } = req.body
-    if (
-        [username, email, password].some((field) => field?.trim() === "")
-    ) {
-        throw new apiError(401, "users all details required")
-    }
+  const { username, email, password } = req.body;
+  if ([username, email, password].some((field) => field?.trim() === "")) {
+    throw new apiError(401, "users all details required");
+  }
 
-    const user = await User.findOne({ $or: [{ email }, { username }] })
+  const user = await User.findOne({ $or: [{ email }, { username }] });
 
-    if (user) {
-        throw new apiError(401, "user credintial all ready exist")
-    }
+  if (user) {
+    throw new apiError(401, "user credintial all ready exist");
+  }
 
-    const newUser = await User.create(
-        {
-            username,
-            email,
-            password
-        }
-    )
+  const newUser = await User.create({
+    username,
+    email,
+    password,
+  });
 
-    const createUser = await User.findById(newUser._id).select("-password")
+  const createUser = await User.findById(newUser._id).select("-password");
 
-    if (!createUser) {
-        throw new apiError(401, "somthing went wrong while creating User")
-    }
-    return res
-        .status(200)
-        .json(new apiResponse(200, createUser, "user created successfully"))
-})
+  if (!createUser) {
+    throw new apiError(401, "somthing went wrong while creating User");
+  }
+  return res
+    .status(200)
+    .json(new apiResponse(200, createUser, "user created successfully"));
+});
 
 //LoginUser
 const loginUser = asyncHandler(async (req, res) => {
-    const { username, password } = req.body
+  const { email, password } = req.body;
 
-    if (
-        [username, password].some((field) => field.trim() === "")
-    ) {
-        throw new apiError(401, "all fields are required")
-    }
-    const loggedIn = await User.findOne({ username })
+  if (!email || !password) {
+    throw new apiError(401, "all fields are required");
+  }
+  const loggedIn = await User.findOne({ email });
 
-    if (!loggedIn) {
-        throw new apiError(401, "user not registered")
-    }
+  if (!loggedIn) {
+    throw new apiError(401, "user not registered");
+  }
 
-    const isPasswordValid = await loggedIn.isPasswordCorrect(password)
+  const isPasswordValid = await loggedIn.isPasswordCorrect(password);
 
-    if (!isPasswordValid) {
-        throw new apiError(401, "User Password are wrong")
-    }
+  if (!isPasswordValid) {
+    throw new apiError(401, "User Password are wrong");
+  }
 
-    // generate refresh and access token
-    const { accessToken, refreshToken } = await generateAccessAndRefreshToken(loggedIn._id)
+  // generate refresh and access token
+  const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
+    loggedIn._id
+  );
 
-    const loggedInUser = await User.findById(loggedIn._id)
-        .select("-password -refreshToken")
-    const options = {
-        httpOnly: true,
-        secure: true
-    }
+  const loggedInUser = await User.findById(loggedIn._id).select(
+    "-password -refreshToken"
+  );
+  const options = {
+    httpOnly: true,
+    secure: true,
+  };
 
-    return res
-        .status(200)
-        .cookie("accessToken", accessToken, options)
-        .cookie("refreshToken", refreshToken, options)
-        .json(new apiResponse(200,
-            { accessToken, refreshToken, loggedInUser: loggedIn },
-            "user successfully logged in."))
-})
+  return res
+    .status(200)
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, options)
+    .json(
+      new apiResponse(
+        200,
+        { accessToken, refreshToken, loggedInUser: loggedIn },
+        "user successfully logged in."
+      )
+    );
+});
 
 // check-Auth
 const checkAuth = asyncHandler(async (req, res) => {
-    return res
-        .status(200)
-        .json(new apiResponse(
-            200,
-            { user: req.user },
-            "user logged in"
-        )
-        )
-})
+  return res
+    .status(200)
+    .json(new apiResponse(200, { user: req.user }, "user logged in"));
+});
 
 //createProject
 const createProject = asyncHandler(async (req, res) => {
-    const { name, description, members } = req.body
+  const { name, description, members } = req.body;
 
-    if ([name, description, members].some((field) => field.trim() === "")) {
-        throw new apiError(401, "all fileds are required")
-    }
+  if ([name, description, members].some((field) => field.trim() === "")) {
+    throw new apiError(401, "all fileds are required");
+  }
 
-    const newProject = await Project.create(
-        {
-            name,
-            description,
-            members,
-            createdBy: req.user._id,
-        }
-    )
+  const newProject = await Project.create({
+    name,
+    description,
+    members,
+    createdBy: req.user._id,
+  });
 
-    if (!newProject) {
-        throw new apiError(401, "Error while creating Project")
-    }
+  if (!newProject) {
+    throw new apiError(401, "Error while creating Project");
+  }
 
-    return res
-        .status(200)
-        .json(new apiResponse(200, newProject, "Successfully add New Project"))
-})
+  return res
+    .status(200)
+    .json(new apiResponse(200, newProject, "Successfully add New Project"));
+});
 
 //getAllProject
 const getAllProject = asyncHandler(async (req, res) => {
-    const getProjects = await Project.find()
+  const getProjects = await Project.find();
 
-    if (!getProjects) {
-        throw new apiError(401, "Error while get All Project")
-    }
+  if (!getProjects) {
+    throw new apiError(401, "Error while get All Project");
+  }
 
-    return res
-        .status(200)
-        .json(new apiResponse(200, getProjects, "Successfully get all project"))
-})
+  return res
+    .status(200)
+    .json(new apiResponse(200, getProjects, "Successfully get all project"));
+});
 
 //getSingleProject
 const getSingleProject = asyncHandler(async (req, res) => {
-    const { id } = req.params
+  const { id } = req.params;
 
-    if (!id) {
-        throw new apiError(401, "Id required")
-    }
-    const singleProject = await Project.findById(id)
+  if (!id) {
+    throw new apiError(401, "Id required");
+  }
+  const singleProject = await Project.findById(id);
 
-    if (!singleProject) {
-        throw new apiError(401, "Error while get single Project")
-    }
+  if (!singleProject) {
+    throw new apiError(401, "Error while get single Project");
+  }
 
-    return res
-        .status(200)
-        .json(new apiResponse(200, singleProject, "Successfully get single Project"))
-})
+  return res
+    .status(200)
+    .json(
+      new apiResponse(200, singleProject, "Successfully get single Project")
+    );
+});
 
 //updateSingleProject
 const updateSingleProject = asyncHandler(async (req, res) => {
-    const { id } = req.params
-    if (!id) {
-        throw new apiError(401, "Id required")
-    }
-    const { name, description, members } = req.body
+  const { id } = req.params;
+  if (!id) {
+    throw new apiError(401, "Id required");
+  }
+  const { name, description, members } = req.body;
 
-    if ([name, description, members].some((field) => field.trim() === "")) {
-        throw new apiError(401, "all fileds are required")
-    }
-    const updateProject = await Project.findByIdAndUpdate(id,
-        {
-            name,
-            description,
-            members
-        }, { new: true, runValidators: true }
-    )
+  if ([name, description, members].some((field) => field.trim() === "")) {
+    throw new apiError(401, "all fileds are required");
+  }
+  const updateProject = await Project.findByIdAndUpdate(
+    id,
+    {
+      name,
+      description,
+      members,
+    },
+    { new: true, runValidators: true }
+  );
 
-    if (!updateProject) {
-        throw new apiError(401, "Error while updating Project")
-    }
+  if (!updateProject) {
+    throw new apiError(401, "Error while updating Project");
+  }
 
-    return res
-        .status(200)
-        .json(new apiResponse(200, updateProject, "Successfully Update Project"))
-})
+  return res
+    .status(200)
+    .json(new apiResponse(200, updateProject, "Successfully Update Project"));
+});
 
 //deleteSingleProject
 const deleteSingleProject = asyncHandler(async (req, res) => {
-    const { id } = req.params
+  const { id } = req.params;
 
-    if (!id) {
-        throw new apiError(401, "Id required")
-    }
-    const deleteProject = await Project.findByIdAndDelete(id)
+  if (!id) {
+    throw new apiError(401, "Id required");
+  }
+  const deleteProject = await Project.findByIdAndDelete(id);
 
-    if (!deleteProject) {
-        throw new apiError(401, "Error while deleting Project")
-    }
+  if (!deleteProject) {
+    throw new apiError(401, "Error while deleting Project");
+  }
 
-    return res
-        .status(200)
-        .json(new apiResponse(200, deleteProject, "Successfully delete Project"))
-})
+  return res
+    .status(200)
+    .json(new apiResponse(200, deleteProject, "Successfully delete Project"));
+});
 
 // createTask
 const createTask = asyncHandler(async (req, res) => {
-    const { title, description, status, priority, dueDate, tags } = req.body
+  const { title, description, status, priority, dueDate } = req.body;
 
-    if ([title, description, status, priority, dueDate, tags]
-        .some((field) => field.trim() === "")
-    ) {
-        throw new apiError(401, "all fields are required")
-    }
-
-    const newTask = await Task.create(
-        {
-            title,
-            description,
-            status,
-            priority,
-            dueDate,
-            tags,
-            createdBy: req.user._id,
-        }
+  if (
+    [title, description, status, priority, dueDate].some(
+      (field) => field.trim() === ""
     )
-    if (!newTask) {
-        throw new apiError(401, "Error while adding task")
-    }
+  ) {
+    throw new apiError(401, "all fields are required");
+  }
 
-    return res
-        .status(200)
-        .json(new apiResponse(200, newTask, "Task add successfully"))
-})
+  const newTask = await Task.create({
+    title,
+    description,
+    status,
+    priority,
+    dueDate,
+    createdBy: req.user._id,
+  });
+  if (!newTask) {
+    throw new apiError(401, "Error while adding task");
+  }
+
+  return res
+    .status(200)
+    .json(new apiResponse(200, newTask, "Task add successfully"));
+});
 
 //getAllTask
 const getAllTask = asyncHandler(async (req, res) => {
-    const getTask = await Task.find()
+  const getTask = await Task.find();
 
-    if (!getTask) {
-        throw new apiError(401, "Error while get Task")
-    }
-    return res
-        .status(200)
-        .json(new apiResponse(200, getTask, "Successfully get Task"))
-})
+  if (!getTask) {
+    throw new apiError(401, "Error while get Task");
+  }
+  return res
+    .status(200)
+    .json(new apiResponse(200, getTask, "Successfully get Task"));
+});
 
 //getSingleTask
 const getSingleTask = asyncHandler(async (req, res) => {
-    const { id } = req.params
+  const { id } = req.params;
 
-    if (!id) {
-        throw new apiError(401, "Id required")
-    }
+  if (!id) {
+    throw new apiError(401, "Id required");
+  }
 
-    const singleTask = await Task.findById(id)
+  const singleTask = await Task.findById(id);
 
-    if (!singleTask) {
-        throw new apiError(401, "Error while get single Task")
-    }
-    return res
-        .status(200)
-        .json(new apiResponse(200, singleTask, "Successfully get Task"))
-})
+  if (!singleTask) {
+    throw new apiError(401, "Error while get single Task");
+  }
+  return res
+    .status(200)
+    .json(new apiResponse(200, singleTask, "Successfully get Task"));
+});
 
 // updateSingleTask
 const updateSingleTask = asyncHandler(async (req, res) => {
-    const { id } = req.params
+  const { id } = req.params;
 
-    if (!id) {
-        throw new apiError(401, "Id required")
-    }
-    const { title, description, status, priority, dueDate, tags } = req.body
+  if (!id) {
+    throw new apiError(401, "Id required");
+  }
+  const { title, description, status, priority, dueDate } = req.body;
 
-    if ([title, description, status, priority, dueDate, tags]
-        .some((field) => field.trim() === "")
-    ) {
-        throw new apiError(401, "all fields are required")
-    }
-    const updateTask = await Task.findByIdAndUpdate(id, {
-        title,
-        description,
-        status,
-        priority,
-        dueDate,
-        tags,
-    }, { new: true, runValidators: true })
+  if (
+    [title, description, status, priority, dueDate].some(
+      (field) => field.trim() === ""
+    )
+  ) {
+    throw new apiError(401, "all fields are required");
+  }
+  const updateTask = await Task.findByIdAndUpdate(
+    id,
+    {
+      title,
+      description,
+      status,
+      priority,
+      dueDate,
+    },
+    { new: true, runValidators: true }
+  );
 
-    if (!updateTask) {
-        throw new apiError(401, "Error while update Task")
-    }
+  if (!updateTask) {
+    throw new apiError(401, "Error while update Task");
+  }
 
-    return res
-        .status(200)
-        .json(new apiResponse(200, updateTask, "Successfully updated Task"))
-})
+  return res
+    .status(200)
+    .json(new apiResponse(200, updateTask, "Successfully updated Task"));
+});
 
 // deleteTask
 const deleteTask = asyncHandler(async (req, res) => {
-    const { id } = req.params
+  const { id } = req.params;
 
-    if (!id) {
-        throw new apiError(401, "Id required")
-    }
-    const destroyTask = await Task.findByIdAndDelete(id)
+  if (!id) {
+    throw new apiError(401, "Id required");
+  }
+  const destroyTask = await Task.findByIdAndDelete(id);
 
-    if (!destroyTask) {
-        throw new apiError(401, "Error while deleting task")
-    }
-    return res
-        .status(200)
-        .json(new apiResponse(200, destroyTask, "Successfully deleted Task"))
-})
+  if (!destroyTask) {
+    throw new apiError(401, "Error while deleting task");
+  }
+  return res
+    .status(200)
+    .json(new apiResponse(200, destroyTask, "Successfully deleted Task"));
+});
+
+//toggleComplete
+const toggleComplete = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { completed } = req.body;
+  if (!id) {
+    throw new apiError(401, "Id required");
+  }
+
+  if (completed === undefined) {
+    throw new apiError(401, "completed required");
+  }
+  const toggleTask = await Task.findByIdAndUpdate(
+    id,
+    {
+      completed,
+    },
+    { new: true, runValidators: true }
+  );
+
+  if (!toggleTask) {
+    throw new apiError(401, "Error while toggle Task");
+  }
+  return res
+    .status(200)
+    .json(new apiResponse(200, toggleTask, "successfully toggled task"));
+});
 
 //createSubTask
 const createSubTask = asyncHandler(async (req, res) => {
-    const { title, description, status, taskId } = req.body
+  const { title, description, status, taskId } = req.body;
 
-    if ([title, description, status, taskId].some((field) => field.trim() === "")) {
-        throw new apiError(401, "all fileds are required")
-    }
+  if (
+    [title, description, status, taskId].some((field) => field.trim() === "")
+  ) {
+    throw new apiError(401, "all fileds are required");
+  }
 
-    const newSubTask = await SubTask.create(
-        {
-            taskId,
-            title,
-            description,
-            status,
-            createdBy: req.user._id
-        }
-    )
+  const newSubTask = await SubTask.create({
+    taskId,
+    title,
+    description,
+    status,
+    createdBy: req.user._id,
+  });
 
-    if (!newSubTask) {
-        throw new apiError(401, "Error while creating new SubTask")
-    }
-    return res
-        .status(200)
-        .json(new apiResponse(200, newSubTask, "Successfully created subTask"))
-})
+  if (!newSubTask) {
+    throw new apiError(401, "Error while creating new SubTask");
+  }
+  return res
+    .status(200)
+    .json(new apiResponse(200, newSubTask, "Successfully created subTask"));
+});
 
 //getAllSubTask
 const getAllSubTask = asyncHandler(async (req, res) => {
-    const getSubTask = await SubTask.find()
+  const getSubTask = await SubTask.find();
 
-    if (!getSubTask) {
-        throw new apiError(401, "Error while get SubTask")
-    }
-    return res
-        .status(200)
-        .json(new apiResponse(200, getSubTask, "Successfully get All Subtask"))
-})
+  if (!getSubTask) {
+    throw new apiError(401, "Error while get SubTask");
+  }
+  return res
+    .status(200)
+    .json(new apiResponse(200, getSubTask, "Successfully get All Subtask"));
+});
 
 //getSingleTask
 const getSingleSubTask = asyncHandler(async (req, res) => {
-    const { id } = req.params
-    if (!id) {
-        throw new apiError(401, "Id required")
-    }
+  const { id } = req.params;
+  if (!id) {
+    throw new apiError(401, "Id required");
+  }
 
-    const singleSubTask = await SubTask.findById(id)
+  const singleSubTask = await SubTask.findById(id);
 
-    if (!singleSubTask) {
-        throw new apiError(401, "Error while Get Single SubTask")
-    }
+  if (!singleSubTask) {
+    throw new apiError(401, "Error while Get Single SubTask");
+  }
 
-    return res
-        .status(200)
-        .json(new apiResponse(200, singleSubTask, "Successfully get subtask"))
-})
+  return res
+    .status(200)
+    .json(new apiResponse(200, singleSubTask, "Successfully get subtask"));
+});
 
 //updateSubTask
 const updateSubTask = asyncHandler(async (req, res) => {
-    const { id } = req.params
+  const { id } = req.params;
 
-    if (!id) {
-        throw new apiError(401, "Id required")
-    }
+  if (!id) {
+    throw new apiError(401, "Id required");
+  }
 
-    const { title, description, status } = req.body
+  const { title, description, status } = req.body;
 
-    if ([title, description, status].some((field) => field.trim() === "")) {
-        throw new apiError(401, "all fileds are required")
-    }
+  if ([title, description, status].some((field) => field.trim() === "")) {
+    throw new apiError(401, "all fileds are required");
+  }
 
-    const EditSubtask = await SubTask.findByIdAndUpdate(id, {
-        title,
-        description,
-        status,
-    }, { new: true, runValidators: true })
+  const EditSubtask = await SubTask.findByIdAndUpdate(
+    id,
+    {
+      title,
+      description,
+      status,
+    },
+    { new: true, runValidators: true }
+  );
 
-    if (!EditSubtask) {
-        throw new apiError(401, "Error while Editing subtask")
-    }
+  if (!EditSubtask) {
+    throw new apiError(401, "Error while Editing subtask");
+  }
 
-    return res
-        .status(200)
-        .json(new apiResponse(200, EditSubtask, "Successfully updated subtask"))
-})
+  return res
+    .status(200)
+    .json(new apiResponse(200, EditSubtask, "Successfully updated subtask"));
+});
 
 //deleteSubTask
 const deleteSubTask = asyncHandler(async (req, res) => {
-    const { id } = req.params
+  const { id } = req.params;
 
-    if (!id) {
-        throw new apiError(401, "Id required")
-    }
+  if (!id) {
+    throw new apiError(401, "Id required");
+  }
 
-    const destroySubTask = await SubTask.findByIdAndDelete(id)
+  const destroySubTask = await SubTask.findByIdAndDelete(id);
 
-    if (!destroySubTask) {
-        throw new apiError(401, "Error while deleting subTask")
-    }
+  if (!destroySubTask) {
+    throw new apiError(401, "Error while deleting subTask");
+  }
 
-    return res
-        .status(200)
-        .json(new apiResponse(200, destroySubTask, "Successfully deleted subTask"))
-})
+  return res
+    .status(200)
+    .json(new apiResponse(200, destroySubTask, "Successfully deleted subTask"));
+});
 
 //createComment
 const createComment = asyncHandler(async (req, res) => {
-    const { taskId, message } = req.body
+  const { taskId, message } = req.body;
 
-    if (!taskId || !message) {
-        throw new apiError(401, "all field are required")
-    }
+  if (!taskId || !message) {
+    throw new apiError(401, "all field are required");
+  }
 
-    const newComment = await Comment.create({
-        taskId,
-        message,
-        createdBy: req.user._id
-    })
+  const newComment = await Comment.create({
+    taskId,
+    message,
+    createdBy: req.user._id,
+  });
 
-    if (!newComment) {
-        throw new apiError(401, "Error while add new Comment")
-    }
+  if (!newComment) {
+    throw new apiError(401, "Error while add new Comment");
+  }
 
-    return res
-        .status(200)
-        .json(new apiResponse(200, newComment, "Successfully create new Comment"))
-})
+  return res
+    .status(200)
+    .json(new apiResponse(200, newComment, "Successfully create new Comment"));
+});
 
 //getAllComment
 const getAllComment = asyncHandler(async (req, res) => {
-    const GetComments = await Comment.find()
+  const GetComments = await Comment.find();
 
-    if (!GetComments) {
-        throw new apiError(401, "Error while Get Comments")
-    }
-    return res
-        .status(200)
-        .json(new apiResponse(200, GetComments, "Successfully Get Comments"))
-})
+  if (!GetComments) {
+    throw new apiError(401, "Error while Get Comments");
+  }
+  return res
+    .status(200)
+    .json(new apiResponse(200, GetComments, "Successfully Get Comments"));
+});
 
 //updateSingleComment
 const updateSingleComment = asyncHandler(async (req, res) => {
-    const { id } = req.params
+  const { id } = req.params;
 
-    if (!id) {
-        throw new apiError(401, "Id required")
-    }
+  if (!id) {
+    throw new apiError(401, "Id required");
+  }
 
-    const { message } = req.body
+  const { message } = req.body;
 
-    if (!message) {
-        throw new apiError(401, "message field required")
-    }
+  if (!message) {
+    throw new apiError(401, "message field required");
+  }
 
-    const updateMessage = await Comment.findByIdAndUpdate(id, {
-        message
-    }, { new: true, runValidators: true })
+  const updateMessage = await Comment.findByIdAndUpdate(
+    id,
+    {
+      message,
+    },
+    { new: true, runValidators: true }
+  );
 
-    if (!updateMessage) {
-        throw new apiError(401, "Error while update Message")
-    }
+  if (!updateMessage) {
+    throw new apiError(401, "Error while update Message");
+  }
 
-    return res
-        .status(200)
-        .json(new apiResponse(200, updateMessage, "Successfully updated Comment"))
-
-})
+  return res
+    .status(200)
+    .json(new apiResponse(200, updateMessage, "Successfully updated Comment"));
+});
 
 //deleteComment
 const deleteComment = asyncHandler(async (req, res) => {
-    const { id } = req.params
-    if (!id) {
-        throw new apiError(401, "Id required")
-    }
+  const { id } = req.params;
+  if (!id) {
+    throw new apiError(401, "Id required");
+  }
 
-    const destroyComment = await Comment.findByIdAndDelete(id)
+  const destroyComment = await Comment.findByIdAndDelete(id);
 
-    if (!destroyComment) {
-        throw new apiError(401, "Error while deleting Comment")
-    }
+  if (!destroyComment) {
+    throw new apiError(401, "Error while deleting Comment");
+  }
 
-    return res
-        .status(200)
-        .json(new apiResponse(200, destroyComment, "Successfully deleted Comment"))
-})
+  return res
+    .status(200)
+    .json(new apiResponse(200, destroyComment, "Successfully deleted Comment"));
+});
 export {
-    registerUser,
-    loginUser,
-    checkAuth,
-    createProject,
-    getAllProject,
-    getSingleProject,
-    updateSingleProject,
-    deleteSingleProject,
-    createTask,
-    getAllTask,
-    getSingleTask,
-    updateSingleTask,
-    deleteTask,
-    createSubTask,
-    getAllSubTask,
-    getSingleSubTask,
-    updateSubTask,
-    deleteSubTask,
-    createComment,
-    getAllComment,
-    updateSingleComment,
-    deleteComment
-}
-
-
+  registerUser,
+  loginUser,
+  checkAuth,
+  createProject,
+  getAllProject,
+  getSingleProject,
+  updateSingleProject,
+  deleteSingleProject,
+  createTask,
+  getAllTask,
+  getSingleTask,
+  updateSingleTask,
+  deleteTask,
+  createSubTask,
+  getAllSubTask,
+  getSingleSubTask,
+  updateSubTask,
+  deleteSubTask,
+  createComment,
+  getAllComment,
+  updateSingleComment,
+  deleteComment,
+  toggleComplete,
+};

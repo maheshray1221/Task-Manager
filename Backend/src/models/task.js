@@ -1,51 +1,51 @@
-import mongoose from "mongoose"
+import mongoose from "mongoose";
 
-const taskSchema = new mongoose.Schema({
+const taskSchema = new mongoose.Schema(
+  {
     title: {
-        type: String,
-        required: true,
-        unique: true,
+      type: String,
+      required: true,
+      unique: true,
     },
     description: {
-        type: String,
-        required: true,
-
+      type: String,
+      required: true,
     },
     status: {
-        type: String,
-        enum: ["PENDING", "IN_PROGRESS", "ON_HOLD", "CANCELLED"],
-        required: true,
-
+      type: String,
+      enum: ["In Progress", "Completed"],
+      required: true,
     },
     priority: {
-        type: String,
-        enum: ["LOW", "MEDIUM", "HIGH", "URGENT"],
-        default: "MEDIUM",
-        required: true,
-
+      type: String,
+      enum: ["Low", "Medium", "Hard"],
+      default: "MEDIUM",
+      required: true,
     },
     projectId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref:"Project"
-
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Project",
     },
     dueDate: {
-        type: Date,
-        required: true,
-
+      type: Date,
+      required: true,
     },
-    tags: {
-        type: [String],
-        required: true,
+    completed: {
+      type: Boolean,
+      default: false,
     },
+    // tags: {
+    //   type: [String],
+    //   required: true,
+    // },
     createdBy: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User"
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
     },
+  },
+  { timestamps: true }
+);
 
-}, { timestamps: true })
+const Task = mongoose.model("Task", taskSchema);
 
-
-const Task = mongoose.model("Task", taskSchema)
-
-export default Task
+export default Task;
