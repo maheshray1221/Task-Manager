@@ -6,7 +6,7 @@ import AllTask from "./pages/AllTask";
 import Statictise from "./pages/Statictise";
 import CreateTask from "./components/CreateTask";
 import UpdateTask from "./components/UpdateTask";
-import Register from "./pages/auth/register";
+import Register from "./pages/auth/authentication";
 
 function App() {
   return (

@@ -1,6 +1,38 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import { useTaskStore } from "../Store/TaskStore";
+
 export default function CreateTask() {
   const navigate = useNavigate();
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [status, setStatus] = useState("");
+  const [priority, setPriority] = useState("");
+  const [dueDate, setDueDate] = useState("");
+
+  const { createTask } = useTaskStore();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const result = await createTask(
+        title,
+        description,
+        status,
+        priority,
+        dueDate
+      );
+      if (!result?.success) {
+        throw new Error(result.msg || "Task Credential Wrong Or Empty");
+      }
+      toast.success("Task Successfully Created");
+      console.log(result.data);
+    } catch (error) {
+      toast.error(error.message || "Task Credential Wrong Or Empty");
+      throw new Error(error.message);
+    }
+  };
   return (
     <div className="flex flex-col items-center justify-center inset-0 fixed bg-black/20 backdrop-blur-sm z-50">
       <div className="lg:w-105 lg:min-h-106 bg-white lg:rounded-xl">
@@ -29,13 +61,17 @@ export default function CreateTask() {
             X
           </button>
         </div>
+        <ToastContainer position="bottom-left" autoClose={3000} />
         <div className="lg:ml-4">
-          <form>
+          <form onSubmit={handleSubmit}>
             <label htmlFor="">Task Title</label>
             <br />
             <input
+              value={title}
+              name="title"
               className="border-2 border-gray-200 lg:rounded-xl lg:mt-1"
               type="text"
+              onChange={(e) => setTitle(e.target.value)}
             />
 
             <div className="flex lg:gap-2">
@@ -57,6 +93,9 @@ export default function CreateTask() {
               <p>Description</p>
             </div>
             <textarea
+              value={description}
+              name="description"
+              onChange={(e) => setDescription(e.target.value)}
               className="border-2 border-gray-200 lg:rounded-xl lg:h-20 lg:w-95 lg:mt-1 lg:text-lg"
               type="text"
             ></textarea>
@@ -81,12 +120,14 @@ export default function CreateTask() {
                 </div>
                 <select
                   className="bg-blue-300 lg:w-35 lg:h-8 rounded-sm lg:mt-2"
-                  name=""
+                  name="priority"
+                  value={priority}
                   id=""
+                  onChange={(e) => setPriority(e.target.value)}
                 >
-                  <option value="low">Low</option>
-                  <option value="medium">Medium</option>
-                  <option value="hard">Hard</option>
+                  <option value="Low">Low</option>
+                  <option value="Medium">Medium</option>
+                  <option value="Hard">Hard</option>
                 </select>
               </div>
 
@@ -111,8 +152,10 @@ export default function CreateTask() {
                 <input
                   className="border-2 border-gray-200 lg:w-35 lg:rounded-sm lg:h-8"
                   type="date"
-                  name=""
+                  name="dueDate"
                   id=""
+                  value={dueDate}
+                  onChange={(e) => setDueDate(e.target.value)}
                 />
               </div>
             </div>
@@ -139,6 +182,7 @@ export default function CreateTask() {
               name="status"
               value="Completed"
               id="Completed"
+              onChange={(e) => setStatus(e.target.value)}
             />
             <label className="lg:ml-2" htmlFor="Completed">
               Completed
@@ -149,6 +193,7 @@ export default function CreateTask() {
               name="status"
               value="In Progress"
               id="In Progress"
+              onChange={(e) => setStatus(e.target.value)}
             />
             <label className="lg:ml-2" htmlFor="In Progress">
               In Progress
@@ -170,8 +215,8 @@ export default function CreateTask() {
               </svg>
 
               <button
-                className="text-white lg:ml-2"
                 onClick={() => navigate("/protask/dashboard")}
+                className="text-white lg:ml-2"
               >
                 Create Task
               </button>
