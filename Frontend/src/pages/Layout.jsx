@@ -6,16 +6,12 @@ import Sidebar from "../components/Sidebar";
 export default function Layout() {
   return (
     <div>
-      <Header />
-
-      <div className="flex flex-1 lg:mt-17">
+      <div className="flex flex-1 ">
         <Sidebar />
         <main className="flex-1 ">
           <Outlet />
         </main>
       </div>
-
-      <Footer />
     </div>
   );
 }

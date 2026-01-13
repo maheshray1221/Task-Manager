@@ -11,26 +11,23 @@ export default function CreateTask() {
   const [priority, setPriority] = useState("");
   const [dueDate, setDueDate] = useState("");
 
-  const { createTask } = useTaskStore();
+  const createTask = useTaskStore((state) => state.createTask);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const result = await createTask(
+      const result = await createTask({
         title,
         description,
         status,
         priority,
-        dueDate
-      );
-      if (!result?.success) {
-        throw new Error(result.msg || "Task Credential Wrong Or Empty");
-      }
+        dueDate,
+      });
+
       toast.success("Task Successfully Created");
       console.log(result.data);
     } catch (error) {
       toast.error(error.message || "Task Credential Wrong Or Empty");
-      throw new Error(error.message);
     }
   };
   return (

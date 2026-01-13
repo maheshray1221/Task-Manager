@@ -4,27 +4,35 @@ import { useTaskStore } from "../Store/TaskStore";
 
 export default function TaskList() {
   const navigate = useNavigate();
-  const { getTask, toggleTask } = useTaskStore();
-  const [data, setData] = useState([]);
+
+  const getTask = useTaskStore((state) => state.getTask);
+  const toggleTask = useTaskStore((state) => state.toggleTask);
+  const deleteTask = useTaskStore((state) => state.deleteTask);
+
+  const tasks = useTaskStore((state) => state.tasks);
 
   useEffect(() => {
     async function getdata() {
       const res = await getTask();
-      setData(res.data);
+
+      console.log("zustand", tasks.data);
     }
     getdata();
   }, []);
 
-  const handleToggle = async (id, currentStatus) => {
+  const handletoggle = async (id, completed) => {
     try {
-      const res = await toggleTask(id, currentStatus);
-      setData((prev) =>
-        prev.map((task) =>
-          task._id === id ? { ...task, completed: !task.currentStatus } : task
-        )
-      );
-    } catch (error) {
-      throw new Error(error.message || "somthing went wrong");
+      await toggleTask(id, completed);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleDeleteTask = async (id) => {
+    try {
+      const res = await deleteTask(id);
+    } catch (err) {
+      throw new Error(err.message || "error while delete task");
     }
   };
   return (
@@ -75,7 +83,10 @@ export default function TaskList() {
 
       <div className="lg:w-200 lg:min-h-vh">
         {/* task component  yha se loop start hoga*/}
-        {data.map((task) => (
+        {console.log("tasks value", tasks)}
+        {console.log("is array", Array.isArray(tasks))}
+        {console.log("type", typeof tasks)}
+        {tasks.map((task) => (
           <div
             key={task._id}
             className=" lg:w-200 lg:min-h-35  lg:mt-7 bg-white lg:rounded-xl border-2 lg:shadow-sm border-gray-200 "
@@ -112,6 +123,7 @@ export default function TaskList() {
                     strokeWidth={1.5}
                     stroke="currentColor"
                     className="size-6"
+                    onClick={() => handleDeleteTask(task._id)}
                   >
                     <path
                       strokeLinecap="round"
@@ -127,7 +139,7 @@ export default function TaskList() {
                     strokeWidth={1.5}
                     stroke="currentColor"
                     className="size-6 "
-                    onClick={() => handleToggle(task._id, task.completed)}
+                    onClick={() => handletoggle(task._id, task.completed)}
                   >
                     <path
                       strokeLinecap="round"
@@ -158,7 +170,7 @@ export default function TaskList() {
                   <p className="lg:ml-3">{task.priority}</p>
                 </div>
                 <p className={`${task.completed ? "line-through" : ""}`}>
-                  {task.dueDate.split("T")[0]}
+                  {task.dueDate}
                 </p>
               </div>
               <div className="lg:mt-13">
