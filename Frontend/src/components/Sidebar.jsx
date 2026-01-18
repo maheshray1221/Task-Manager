@@ -6,7 +6,7 @@ export default function Sidebar() {
   return (
     <div
       className="lg:w-65 lg:min-h-screen bg-white/60 lg:shadow-lg border-2 border-gray-200 
-    lg:rounded-xl lg:mt-2 lg:ml-4"
+    lg:rounded-xl lg:mt-2 lg:ml-4 hidden md:block"
     >
       <div className=" bg-transparent lg:shadow-lg border-b-gray-200 lg:mt-5  ">
         <h1 className="lg:text-2xl lg:font-semibold leading-8 lg:ml-12">
@@ -133,7 +133,7 @@ export default function Sidebar() {
 
         <div
           className="lg:flex lg:w-60 min-h-12
-        lg:gap-3.5 lg:mt-2 lg:text-lg lg:items-center lg:ml-10"
+           lg:gap-3.5 lg:mt-2 lg:text-lg lg:items-center lg:ml-10"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

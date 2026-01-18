@@ -7,6 +7,7 @@ import Statictise from "./pages/Statictise";
 import CreateTask from "./components/CreateTask";
 import UpdateTask from "./components/UpdateTask";
 import Register from "./pages/auth/authentication";
+import MobileView from "./pages/MobileView";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/createTask" element={<CreateTask />} />
           <Route path="/updateTask" element={<UpdateTask />} />
+          <Route path="/mobileview" element={<MobileView />} />
         </Routes>
       </Router>
     </div>

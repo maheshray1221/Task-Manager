@@ -38,7 +38,7 @@ export default function TaskList() {
   return (
     <div>
       <div
-        className="flex lg:justify-between lg:w-200 lg:h-12 bg-white lg:rounded-xl border-2 
+        className="flex w-80 h-9 justify-between ml-5 rounded-lg mt-4 lg:ml-0 lg:justify-between lg:w-200 lg:h-12 bg-white lg:rounded-xl border-2 
       lg:shadow-sm border-gray-200 lg:mt-7"
       >
         <div className="flex lg:gap-1.5 lg:w-[33%] lg:ml-7 items-center">
@@ -57,31 +57,22 @@ export default function TaskList() {
             />
           </svg>
 
-          <h1 className="lg:text-lg lg:font-semibold ">All Tasks</h1>
+          <h1 className=" lg:text-lg lg:font-semibold ">All Tasks</h1>
         </div>
-        <div className="flex lg:w-[65%] lg:h-9 lg:gap-5 items-center lg:ml-18 lg:mt-1 lg:text-[0.80rem] rounded-xl bg-sky-50">
-          <p className="border border-yellow-200 lg:px-3 lg:py-1 rounded-sm">
-            All
+        <div className="flex w-40 gap-2 mr-5 lg:mr-0 lg:w-[65%] lg:h-9 lg:gap-5 items-center lg:ml-18 lg:mt-1 lg:text-[0.80rem] rounded-xl lg:bg-sky-50">
+          <p className="border border-yellow-200 px-1.5 py-1 lg:px-3 lg:py-1 rounded-sm">
+            Low
           </p>
-          <p className="border border-yellow-200 lg:px-3 lg:py-1 rounded-sm">
-            Today
-          </p>
-          <p className="border border-yellow-200 lg:px-3 lg:py-1 rounded-sm">
-            Week
-          </p>
-          <p className="border border-yellow-200 lg:px-3 lg:py-1 rounded-sm">
-            High
-          </p>
-          <p className="border border-yellow-200 lg:px-3 lg:py-1 rounded-sm">
+          <p className="border border-yellow-200 px-1.5 py-1 lg:px-3 lg:py-1 rounded-sm">
             Medium
           </p>
-          <p className="border border-yellow-200 lg:px-3 lg:py-1 rounded-sm">
-            Low
+          <p className="border border-yellow-200 px-1.5 py-1 lg:px-3 lg:py-1 rounded-sm">
+            High
           </p>
         </div>
       </div>
 
-      <div className="lg:w-200 lg:min-h-vh">
+      <div className="w-full min-h-vh lg:w-200 lg:min-h-vh lg:ml-0 ml-7">
         {/* task component  yha se loop start hoga*/}
         {console.log("tasks value", tasks)}
         {console.log("is array", Array.isArray(tasks))}
@@ -89,17 +80,18 @@ export default function TaskList() {
         {tasks.map((task) => (
           <div
             key={task._id}
-            className=" lg:w-200 lg:min-h-35  lg:mt-7 bg-white lg:rounded-xl border-2 lg:shadow-sm border-gray-200 "
+            className="w-83 h-28  mt-4 rounded-xl border shadow-sm 
+            lg:w-200 lg:min-h-35  lg:mt-7 bg-white lg:rounded-xl lg:border-2 lg:shadow-sm border-gray-200 "
           >
-            <div className="flex lg:justify-between lg:mt-3 lg:ml-4">
+            <div className="flex justify-between mt-1.5 ml-2 lg:mt-3 lg:ml-4">
               <h1
-                className={`lg:text-2xl lg:font-semibold ${
+                className={`text-lg font-semibold lg:text-2xl lg:font-semibold ${
                   task.completed ? "line-through" : ""
                 } `}
               >
                 {task.title}
               </h1>
-              <div className="flex lg:w-[20%] lg:gap-6">
+              <div className="flex w-[18%] gap-2 lg:w-[20%] lg:gap-6 lg:mr-0 mr-2">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -151,30 +143,30 @@ export default function TaskList() {
               </div>
             </div>
             <div className="flex justify-between">
-              <div className="lg:ml-4 lg:text-lg lg:font-base ">
+              <div className="ml-2 text-[0.90rem] font-base lg:ml-4 lg:text-lg lg:font-base ">
                 <p className={`${task.completed ? "line-through" : ""}`}>
                   {task.description}
                 </p>
                 <div
                   className={`${
                     task.priority === "Low" &&
-                    "bg-blue-400 text-white rounded-2xl lg:h-7 lg:w-16"
+                    "bg-blue-400 text-white rounded-lg h-6 w-15 lg:rounded-2xl lg:h-7 lg:w-16"
                   } ${
                     task.priority === "Medium" &&
-                    "bg-orange-400 text-white rounded-2xl lg:h-7 lg:w-22"
+                    "bg-orange-400 text-white rounded-lg h-6 w-15 lg:rounded-2xl lg:h-7 lg:w-22"
                   }  ${
                     task.priority === "Hard" &&
-                    "bg-red-400 text-white rounded-2xl lg:h-7 lg:w-16"
+                    "bg-red-400 text-white rounded-lg h-6 w-15 lg:rounded-2xl lg:h-7 lg:w-16"
                   } ${task.completed ? "line-through " : ""}`}
                 >
-                  <p className="lg:ml-3">{task.priority}</p>
+                  <p className="ml-1 lg:ml-3">{task.priority}</p>
                 </div>
                 <p className={`${task.completed ? "line-through" : ""}`}>
                   {task.dueDate}
                 </p>
               </div>
-              <div className="lg:mt-13">
-                <button className="lg:mr-8 lg:px-2.5 lg:py-1 bg-blue-700 rounded-xl text-white">
+              <div className="mt-9 lg:mt-13">
+                <button className="mr-2 px-2 py-1 rounded-lg lg:mr-8 lg:px-2.5 lg:py-1 bg-blue-700 lg:rounded-xl text-white">
                   SubTasks
                 </button>
               </div>
@@ -185,9 +177,9 @@ export default function TaskList() {
 
       {/* yhaa loop end hoga */}
       {/* add taks button */}
-      <div className=" lg:mt-7 lg:mb-7  ">
+      <div className="mt-5 mb-0 flex flex-col items-center  lg:mt-7 lg:mb-7  lg:ml-0 ">
         <button
-          className="bg-sky-50 px-80 py-2 rounded-xl border border-dashed border-sky-500"
+          className="bg-sky-50 px-26 py-1 rounded-lg lg:px-80 lg:py-2 lg:rounded-xl border border-dashed border-sky-500"
           onClick={() => navigate("/createTask")}
         >
           <span className="text-3xl ">+</span> Add New Task
