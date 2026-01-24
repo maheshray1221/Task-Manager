@@ -8,6 +8,7 @@ export default function TaskList() {
   const getTask = useTaskStore((state) => state.getTask);
   const toggleTask = useTaskStore((state) => state.toggleTask);
   const deleteTask = useTaskStore((state) => state.deleteTask);
+  const [priority, setPriority] = useState("All");
 
   const tasks = useTaskStore((state) => state.tasks);
 
@@ -35,6 +36,8 @@ export default function TaskList() {
       throw new Error(err.message || "error while delete task");
     }
   };
+
+  const filterTask = priority=== "All" ? tasks : tasks.filter((task)=>task.priority === priority)
   return (
     <div>
       <div
@@ -57,18 +60,29 @@ export default function TaskList() {
             />
           </svg>
 
-          <h1 className=" lg:text-lg lg:font-semibold ">All Tasks</h1>
+          <h1 onClick={() => setPriority("All")}
+          className={`${priority === "All" ? "bg-blue-700 text-white" : ""} lg:text-lg lg:font-semibold cursor-pointer px-1.5 py-1 lg:px-3 lg:py-1 rounded-sm`}>All Tasks</h1>
         </div>
         <div className="flex w-40 gap-2 mr-5 lg:mr-0 lg:w-[65%] lg:h-9 lg:gap-5 items-center lg:ml-18 lg:mt-1 lg:text-[0.80rem] rounded-xl lg:bg-sky-50">
-          <p className="border border-yellow-200 px-1.5 py-1 lg:px-3 lg:py-1 rounded-sm">
+          
+          <h1
+            onClick={() => setPriority("Low")}
+            className={`${priority === "Low" ? "bg-blue-700 text-white" : ""} cursor-pointer px-1.5 py-1 lg:px-3 lg:py-1 rounded-sm `}
+          >
             Low
-          </p>
-          <p className="border border-yellow-200 px-1.5 py-1 lg:px-3 lg:py-1 rounded-sm">
+          </h1>
+          <h1
+            onClick={() => setPriority("Medium")}
+            className={`${priority === "Medium" ? "bg-blue-700 text-white" : ""} cursor-pointer px-1.5 py-1 lg:px-3 lg:py-1 rounded-sm`}
+          >
             Medium
-          </p>
-          <p className="border border-yellow-200 px-1.5 py-1 lg:px-3 lg:py-1 rounded-sm">
+          </h1>
+          <h1
+            onClick={() => setPriority("High")}
+            className={`${priority === "High" ? "bg-blue-700 text-white" : ""} cursor-pointer  px-1.5 py-1 lg:px-3 lg:py-1 rounded-sm`}
+          >
             High
-          </p>
+          </h1>
         </div>
       </div>
 
@@ -77,7 +91,7 @@ export default function TaskList() {
         {console.log("tasks value", tasks)}
         {console.log("is array", Array.isArray(tasks))}
         {console.log("type", typeof tasks)}
-        {tasks.map((task) => (
+        {filterTask.map((task) => (
           <div
             key={task._id}
             className="w-83 h-28  mt-4 rounded-xl border shadow-sm 
@@ -155,14 +169,14 @@ export default function TaskList() {
                     task.priority === "Medium" &&
                     "bg-orange-400 text-white rounded-lg h-6 w-15 lg:rounded-2xl lg:h-7 lg:w-22"
                   }  ${
-                    task.priority === "Hard" &&
+                    task.priority === "High" &&
                     "bg-red-400 text-white rounded-lg h-6 w-15 lg:rounded-2xl lg:h-7 lg:w-16"
                   } ${task.completed ? "line-through " : ""}`}
                 >
                   <p className="ml-1 lg:ml-3">{task.priority}</p>
                 </div>
                 <p className={`${task.completed ? "line-through" : ""}`}>
-                  {task.dueDate}
+                  {task.dueDate.toString()}
                 </p>
               </div>
               <div className="mt-9 lg:mt-13">
