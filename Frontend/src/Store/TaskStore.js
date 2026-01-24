@@ -4,6 +4,7 @@ import { client } from "../Utils/client";
 
 const TaskStore = (set, get) => ({
   tasks: [],
+  singleTask: null,
   loading: false,
   error: null,
   success: false,
@@ -95,6 +96,36 @@ const TaskStore = (set, get) => ({
       throw new Error(error.message || "error while delete task");
     }
   },
+
+  updateTask: async (id, updateData) => {
+    try {
+      console.log("update store called")
+      const res = await client.patch(`/editTask/${id}`,
+        updateData,
+        { withCredentials: true }
+      );
+
+      set((state) => ({
+        tasks: state.tasks.map((task) => task._id === id ? res.data.data : task)
+      }))
+    } catch (error) {
+      throw new Error(error.message || "Error while updating task")
+    }
+  },
+
+  // singleTask: async (id) => {
+  //   try {
+  //     const res = await client.get(`/getTask/${id}`, { withCredentials: true })
+
+  //     set({
+  //       singleTask: res.data.data,
+  //       loading: false,
+  //       success: true,
+  //     });
+  //   } catch (error) {
+  //     throw new Error(error.message || "Error while get single task")
+  //   }
+  // }
 });
 
 export const useTaskStore = create(

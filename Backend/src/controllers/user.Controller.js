@@ -292,6 +292,7 @@ const updateSingleTask = asyncHandler(async (req, res) => {
       status,
       priority,
       dueDate,
+      updatedBy:req.user._id
     },
     { new: true, runValidators: true }
   );

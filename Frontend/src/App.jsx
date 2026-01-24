@@ -27,7 +27,7 @@ function App() {
 
           <Route path="/register" element={<Register />} />
           <Route path="/createTask" element={<CreateTask />} />
-          <Route path="/updateTask" element={<UpdateTask />} />
+          <Route path="/updateTask/:id" element={<UpdateTask />} />
           <Route path="/mobileview" element={<MobileView />} />
         </Routes>
       </Router>

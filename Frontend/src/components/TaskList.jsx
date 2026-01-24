@@ -38,6 +38,7 @@ export default function TaskList() {
   };
 
   const filterTask = priority=== "All" ? tasks : tasks.filter((task)=>task.priority === priority)
+ 
   return (
     <div>
       <div
@@ -113,7 +114,7 @@ export default function TaskList() {
                   strokeWidth={1.5}
                   stroke="currentColor"
                   className="size-6"
-                  onClick={() => navigate("/updateTask")}
+                  onClick={() => navigate(`/updateTask/${task._id}`)}
                 >
                   <path
                     strokeLinecap="round"

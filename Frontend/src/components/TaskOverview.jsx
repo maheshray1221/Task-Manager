@@ -22,6 +22,9 @@ export default function TaskOverview() {
   const tasks = useTaskStore((state) => state.tasks);
   console.log(tasks.length);
 
+  console.log(tasks)
+  console.log("is Array",Array.isArray(tasks))
+
   const allTaskCount = tasks.length
   const lowTaskCount = tasks.filter((task) => task.priority === "Low").length;
   const mediumTaskCount = tasks.filter((task) => task.priority === "Medium",).length;

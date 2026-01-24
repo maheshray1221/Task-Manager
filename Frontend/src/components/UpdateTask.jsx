@@ -1,6 +1,7 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
+import { useTaskStore } from "../Store/TaskStore";
 
 export default function UpdateTask() {
   const navigate = useNavigate();
@@ -9,7 +10,48 @@ export default function UpdateTask() {
   const [status, setStatus] = useState("");
   const [priority, setPriority] = useState("");
   const [dueDate, setDueDate] = useState("");
-  const handleSubmit = (e) => {};
+  // const [task, setTask] = useState(null);
+  const { id } = useParams();
+
+  const updateTask = useTaskStore((state) => state.updateTask);
+
+  // const singleTask = useTaskStore((state) => state.singleTask);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const updateData = {
+        title,
+        description,
+        status,
+        priority,
+        dueDate,
+      };
+
+      const result = await updateTask(id, updateData);
+
+      toast.success("Task Successfully Updated");
+    } catch (error) {
+      toast.error(error.message || "Task Credential Wrong Or Empty");
+    }
+  };
+
+  // call singeltask
+
+  // useEffect(() => {
+  //   const handlesingleTask = async () => {
+  //     try {
+  //       const res = await singleTask(id);
+  //       setTask(res);
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
+  //   handlesingleTask();
+  // }, [id]);
+
+  // console.log("single task->", task);
+
   return (
     <div className="flex flex-col items-center justify-center inset-0 fixed bg-black/20 backdrop-blur-sm z-50">
       <div className="w-95 h-80 rounded-lg lg:w-105 lg:min-h-106 bg-white lg:rounded-xl">
@@ -45,6 +87,7 @@ export default function UpdateTask() {
             <br />
             <input
               value={title}
+              
               name="title"
               className="border rounded-lg mt-1 lg:border-2 border-gray-200 lg:rounded-xl lg:mt-1"
               type="text"
@@ -104,7 +147,7 @@ export default function UpdateTask() {
                 >
                   <option value="Low">Low</option>
                   <option value="Medium">Medium</option>
-                  <option value="Hard">Hard</option>
+                  <option value="High">High</option>
                 </select>
               </div>
 
