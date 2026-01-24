@@ -129,7 +129,7 @@ export default function CreateTask() {
                 >
                   <option value="Low">Low</option>
                   <option value="Medium">Medium</option>
-                  <option value="Hard">Hard</option>
+                  <option value="High">High</option>
                 </select>
               </div>
 

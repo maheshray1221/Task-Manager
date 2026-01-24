@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
 import TaskList from "./TaskList";
 import { useNavigate } from "react-router-dom";
+import { useTaskStore } from "../Store/TaskStore";
+
 export default function TaskOverview() {
+  
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   useEffect(() => {
@@ -16,8 +19,15 @@ export default function TaskOverview() {
   }, [open]);
 
   const [themeState, setThemeState] = useState(0);
+  const [priority, setPriority] = useState("All");
+
+  const tasks = useTaskStore((state) => state.tasks);
+
+  const filterTask = priority=== "All" ? tasks : tasks.filter((task)=>task.priority === priority)
   return (
+    
     <div>
+      
       <div className=" w-full overflow-x-hidden min-h-200 md:w-150 md:min-h-screen lg:w-200 lg:min-h-screen lg:ml-5">
         <div className="">
           <div className="flex justify-between md:justify-between lg:justify-between">
@@ -114,11 +124,11 @@ export default function TaskOverview() {
               </div>
             </div>
           )}
-
+            {filterTask.map((task)=> 
           <div className="flex flex-col gap-3 items-center mt-6  md:gap-0 lg:gap-0 md:flex md:flex-row lg:flex lg:flex-row lg:justify-around lg:mt-5 ">
             <div
               className="bg-white w-83 h-25 rounded-2xl border shadow-sm md:w-35 md:h-15 md:rounded-xl md:border-2 md:shadow-sm 
-          lg:w-50 lg:h-18 lg:rounded-xl flex lg:border-2 lg:shadow-sm border-gray-200"
+             lg:w-50 lg:h-18 lg:rounded-xl flex lg:border-2 lg:shadow-sm border-gray-200"
             >
               <div className="md:bg-blue-200 lg:bg-blue-200 lg:w-5 lg:h-5 lg:mt-7 lg:ml-3 lg:rounded-sm">
                 <svg
@@ -173,7 +183,7 @@ export default function TaskOverview() {
               </div>
               <div className="ml-5 mt-4 md:ml-2 md:mt-2 lg:ml-3 lg:mt-3">
                 <h1 className="text-lg font-semibold lg:font-normal md:text-sm md:font-normal lg:text-lg">
-                  2
+                  {task.priority}
                 </h1>
                 <p className="text-lg md:text-[0.85rem] lg:text-[0.90rem]">
                   Low Priority
@@ -207,7 +217,7 @@ export default function TaskOverview() {
               </div>
               <div className="ml-5 mt-4 md:ml-2 md:mt-2 lg:ml-3 lg:mt-3">
                 <h1 className="text-lg font-semibold lg:font-normal md:text-sm md:font-normal lg:text-lg">
-                  7
+                  {}
                 </h1>
                 <p className="text-lg md:text-[0.85rem] lg:text-[0.90rem]">
                   Medium Priority
@@ -249,6 +259,7 @@ export default function TaskOverview() {
               </div>
             </div>
           </div>
+          )}
         </div>
         <div>
           <TaskList />
