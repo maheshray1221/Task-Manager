@@ -239,7 +239,8 @@ const createTask = asyncHandler(async (req, res) => {
 
 //getAllTask
 const getAllTask = asyncHandler(async (req, res) => {
-  const getTask = await Task.find();
+  const userId = req.user._id
+  const getTask = await Task.find({ createdBy: userId });
 
   if (!getTask) {
     throw new apiError(401, "Error while get Task");
