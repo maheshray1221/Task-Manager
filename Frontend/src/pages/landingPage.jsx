@@ -206,7 +206,7 @@ export default function LandingPage() {
           whileInView={{ y: 0, opacity: 1 }}
           viewport={{ once: false }}
           transition={{ duration: 0.9, ease: "easeOut" }}
-          onClick={() => navigate("/protask")}
+          onClick={() => navigate("/register")}
           className="px-4 py-3 bg-blue-600 mt-10 ml-15 rounded-3xl text-[1.3rem] mb-5
         md:px-7.5 md:py-4.5 md:text-2xl md:rounded-4xl md:ml-66 md:mt-25 
         lg:text-3xl lg:rounded-4xl lg:ml-150 lg:transition-transform lg:duration-500 lg:hover:scale-105 lg:hover:bg-blue-700 text-white"
