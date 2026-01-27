@@ -6,7 +6,7 @@ import cookieParser from 'cookie-parser'
 
 app.use(cors(
     {
-        origin: "http://localhost:5173",
+        origin: "https://task-manager-frontend-th9q.onrender.com/",
         credentials: true,
 
     }
