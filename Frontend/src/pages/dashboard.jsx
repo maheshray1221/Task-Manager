@@ -2,7 +2,7 @@ import Sidebar from "../components/Sidebar.jsx";
 import TaskOverview from "../components/TaskOverview.jsx";
 import TaskStatics from "../components/TaskStatics.jsx";
 
-export default function Desboard() {
+export default function Dasboard() {
   return (
     <>
       <div className="w-full  lg:flex lg:min-h-screen lg:w-full overflow-x-hidden lg:mt-2">

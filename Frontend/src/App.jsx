@@ -1,5 +1,5 @@
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
-import Desboard from "./pages/Dashboard";
+import Dasboard from "./pages/Dashboard";
 import LandingPage from "./pages/landingPage";
 import Layout from "./pages/Layout";
 import AllTask from "./pages/AllTask";
@@ -19,8 +19,8 @@ function App() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/protask" element={<Layout />}>
-            <Route index element={<Desboard />} />
-            <Route path="dashboard" element={<Desboard />} />
+            <Route index element={<Dasboard />} />
+            <Route path="dashboard" element={<Dasboard />} />
             <Route path="allTasks" element={<AllTask />} />
             <Route path="taskStatics" element={<Statictise />} />
           </Route>
