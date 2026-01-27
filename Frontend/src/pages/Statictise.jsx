@@ -1,6 +1,6 @@
 import React from "react";
-import TaskStatics from "../components/TaskStatics";
-import TaskGraph from "../components/TaskGraph";
+
+import TaskGraph from "../components/TaskGraph.jsx";
 
 export default function Statictise() {
   return (

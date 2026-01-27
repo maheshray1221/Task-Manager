@@ -1,13 +1,13 @@
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
-import Dashboard from "./pages/Dashboard";
-import LandingPage from "./pages/landingPage";
-import Layout from "./pages/Layout";
-import AllTask from "./pages/AllTask";
-import Statictise from "./pages/Statictise";
-import CreateTask from "./components/CreateTask";
-import UpdateTask from "./components/UpdateTask";
-import Register from "./pages/auth/authentication";
-import MobileView from "./pages/MobileView";
+import Dashboard from "./pages/Dashboard.jsx";
+import LandingPage from "./pages/landingPage.jsx";
+import Layout from "./pages/Layout.jsx";
+import AllTask from "./pages/AllTask.jsx";
+import Statictise from "./pages/Statictise.jsx";
+import CreateTask from "./components/CreateTask.jsx";
+import UpdateTask from "./components/UpdateTask.jsx";
+import Register from "./pages/auth/authentication.jsx";
+import MobileView from "./pages/MobileView.jsx";
 
 function App() {
   return (

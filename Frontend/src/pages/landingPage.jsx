@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import Footer from "./footer";
-import Header from "./header";
+import Footer from "./footer.jsx";
+import Header from "./header.jsx";
 import { motion } from "framer-motion";
 export default function LandingPage() {
   const navigate = useNavigate();
