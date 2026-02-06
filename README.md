@@ -1,3 +1,34 @@
+## ⚙️ Setup Instructions
+
+Follow the steps below to run the Task Manager application on your local machine.
+
+Prerequisites: Node.js (v14 or above), npm, and MongoDB (local or MongoDB Atlas) must be installed.
+
+Step 1: Clone the repository and navigate to the project directory
+
+git clone https://github.com/maheshray1221/Task-Manager.git
+cd Task-Manager
+
+setup backend 
+cd Backend
+npm install
+
+create .env file inside the backend folder and add:
+PORT=5000
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret
+
+Start the backend server:
+npm run dev
+
+: Set up the frontend
+cd Frontend
+npm install
+npm start
+
+Run the application
+Make sure both backend and frontend servers are running, then open the browser and start using the Task Manager app.
+
 ## 🛠 Tech Stack
 
 <p align="left">
