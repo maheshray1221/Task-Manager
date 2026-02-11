@@ -8,7 +8,7 @@ export default function UpdateTask() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [status, setStatus] = useState("");
-  const [priority, setPriority] = useState("");
+  const [priority, setPriority] = useState("Low");
   const [dueDate, setDueDate] = useState("");
   // const [task, setTask] = useState(null);
   const { id } = useParams();
