@@ -8,7 +8,7 @@ export default function CreateTask() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [status, setStatus] = useState("");
-  const [priority, setPriority] = useState("");
+  const [priority, setPriority] = useState("Low");
   const [dueDate, setDueDate] = useState("");
 
   const createTask = useTaskStore((state) => state.createTask);
