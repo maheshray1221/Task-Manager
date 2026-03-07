@@ -74,4 +74,8 @@ router.route("/editComment/:id").patch(verifyJWT, updateSingleComment);
 
 router.route("/destroyComment/:id").delete(verifyJWT, deleteComment);
 
+router.get("/health", (req, res) => {
+  res.status(200).json({ message: "Server is alive" })
+})
+
 export default router;
